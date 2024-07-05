@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BTC/USDT Orderbook</title>
+</head>
+<body>
+    <h1>BTC/USDT Average Price</h1>
+    {{ graph_ap | safe }}
+</body>
+<body>
+    <h1>BTC/USDT OrderBook Weighted Average Price - Average Price</h1>
+    {{ graph_vwap | safe }}
+</body>
+<body>
+    <h1>BTC/USDT Price Spread and OrderBook Weighted Spread</h1>
+    {{ graph_spread | safe }}
+</body>
+<body>
+    <h1>BTC/USDT OrderBook Imbalance</h1>
+    {{ graph_vi | safe }}
+</body>
+</html>
