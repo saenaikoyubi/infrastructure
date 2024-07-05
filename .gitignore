@@ -1,3 +1,7 @@
 # DataAggregateInfra
 
 DataAggregateInfra/db-data/*
+
+
+# other
+*/__pycache__/*
