@@ -16,8 +16,8 @@ services:
       - aggregate1
       - aggregate2
     networks:
-      local_nw:
-        ipv4_address: 192.168.1.2
+      SDTS_nw:
+        ipv4_address: 192.168.2.2
 
   aggregate1:
     container_name: aggregate1
@@ -33,8 +33,8 @@ services:
     depends_on:
       - db
     networks:
-      local_nw:
-        ipv4_address: 192.168.1.3
+      SDTS_nw:
+        ipv4_address: 192.168.2.3
 
   aggregate2:
     container_name: aggregate2
@@ -47,9 +47,11 @@ services:
       - type: bind
         source: aggregate2/volume
         target: /aggregate2
+    depends_on:
+      - db
     networks:
-      local_nw:
-        ipv4_address: 192.168.1.4
+      SDTS_nw:
+        ipv4_address: 192.168.2.4
 
   db:
     container_name: db
@@ -68,8 +70,8 @@ services:
         source: ./db-data
         target: /var/lib/postgresql/data
     networks:
-      local_nw:
-        ipv4_address: 192.168.1.5
+      SDTS_nw:
+        ipv4_address: 192.168.2.5
 
   adminer:
     container_name: adminer
@@ -81,13 +83,13 @@ services:
     ports:
       - 8080:8080
     networks:
-      local_nw:
-        ipv4_address: 192.168.1.6
+      SDTS_nw:
+        ipv4_address: 192.168.2.6
 
 networks: 
-  local_nw:
+  SDTS_nw:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.168.1.0/24
+        - subnet: 192.168.2.0/24
     

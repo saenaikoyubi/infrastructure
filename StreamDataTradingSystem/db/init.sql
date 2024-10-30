@@ -9,3 +9,42 @@ CREATE TABLE stream (
     tradeID VARCHAR,
     blockTrade BOOLEAN
 );
+
+
+CREATE TABLE baseFeatures (
+    id serial PRIMARY KEY,
+    UNIXTIME bigint NOT NULL,
+    open NUMERIC,
+    high NUMERIC,
+    low NUMERIC,
+    close NUMERIC,
+    mean NUMERIC,
+    VWMean NUMERIC,
+    median NUMERIC,
+    "25%" NUMERIC,
+    "50%" NUMERIC,
+    "75%" NUMERIC,
+    center NUMERIC,
+    buySideMean NUMERIC,
+    sellSideMean NUMERIC,
+    buySideVWMean NUMERIC,
+    sellSideVWMean NUMERIC,
+    buySideMedian NUMERIC,
+    sellSideMedian NUMERIC,
+    buySideCenter NUMERIC,
+    sellSideCenter NUMERIC,
+    "buySide25%" NUMERIC,
+    "buySide50%" NUMERIC,
+    "buySide75%" NUMERIC,
+    "sellSide25%" NUMERIC,
+    "sellSide50%" NUMERIC,
+    "sellSide75%" NUMERIC,
+    sideMean NUMERIC,
+    sideMedian NUMERIC,
+    priceChangeMean NUMERIC,
+    opentime NUMERIC,
+    closetime NUMERIC,
+    "time25%" NUMERIC,
+    "time50%" NUMERIC,
+    "time75%" NUMERIC
+);

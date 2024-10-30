@@ -1,6 +1,3 @@
-requests
 psycopg2-binary
-pandas
-websocket-client
-pybit
 websockets
+pandas

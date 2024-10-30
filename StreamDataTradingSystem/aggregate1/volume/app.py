@@ -3,9 +3,9 @@ import websockets
 import json
 import psycopg2
 
-# サーバのホストとポートを設定（サーバ3はポート12347、サーバ4は12348）
-HOST = 'localhost'
-PORT = 12345  # サーバ3なら12347、サーバ4なら12348に設定
+# サーバのホストとポートを設定
+HOST = "0.0.0.0"
+PORT =  8765
 
 # データベース接続設定
 conn = psycopg2.connect("dbname=mydatabase user=user password=password host=db")
@@ -24,21 +24,43 @@ def insert_trade(trade):
     cursor.execute(insert_query)
     conn.commit()
 
-async def handle_data(websocket):
+# 受信したデータを保持する辞書
+received_data = {}
+
+async def handle_client(websocket, path):
+    global received_data
     async for message in websocket:
-        # 受信したメッセージをJSONデコードしてリスト形式に変換
-        trades_histories = json.loads(message)
+        packet = json.loads(message)
+        data_id = packet["data_id"]
+        packet_number = packet["packet_number"]
+        total_packets = packet["total_packets"]
+        chunk = packet["chunk"]
+
+        # 初めてのdata_idの場合、エントリを初期化
+        if data_id not in received_data:
+            received_data[data_id] = {
+                "chunks": [None] * total_packets,
+                "received_count": 0
+            }
         
-        # 取引履歴のリストをループし、各取引データを表示
-        for trade in trades_histories:
-            insert_trade(trade)
+        # チャンクを保存
+        received_data[data_id]["chunks"][packet_number - 1] = chunk
+        received_data[data_id]["received_count"] += 1
+
+        # 全パケットが揃った場合に結合
+        if received_data[data_id]["received_count"] == total_packets:
+            full_data = [item for sublist in received_data[data_id]["chunks"] for item in sublist]
+            for trade in full_data:
+                insert_trade(trade=trade)
             
+            # 使用済みデータを削除
+            del received_data[data_id]
 
-async def start():
-    # 指定ホストとポートでWebSocketサーバを起動
-    async with websockets.serve(handle_data, HOST, PORT):
-        print(f"Server started on ws://{HOST}:{PORT}")
-        await asyncio.Future()  # 永遠に実行し続ける
+async def main():
+    # WebSocketサーバーを起動してクライアントの接続を待機
+    async with websockets.serve(handle_client, HOST, PORT):
+        print(f"WebSocket server started on ws://{HOST}:{PORT}")
+        await asyncio.Future()  # サーバーを無期限に実行
 
-# サーバ起動
-asyncio.run(start())
+# 実行
+asyncio.run(main())
