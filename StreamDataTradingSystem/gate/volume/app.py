@@ -4,7 +4,7 @@ import websockets
 
 # group分けする条件を設定
 base_price = -1 
-thres = 0.01 / 100  # base_priceからthres%以上価格が乖離するまで1グループとみなす
+thres = 0.2 / 100  # base_priceからthres%以上価格が乖離するまで1グループとみなす
 group = []  # グループを入れる箱
 RECONNECT_DELAY = 5  # 再接続までの待機時間（秒）
 CHUNK_SIZE = 1000  # 分割サイズ（必要に応じて調整）
@@ -50,7 +50,6 @@ async def start_bybit_stream():
                     response = await bybit_ws.recv()
                     message = json.loads(response)
                     if 'topic' in message and message['topic'] == 'publicTrade.BTCUSDT':
-                        print('streaming data')
                         trades = message['data']
                         trades_histories = [
                             {
