@@ -3,7 +3,7 @@ import websockets
 import json
 import pandas as pd
 import psycopg2
-from helper import generateBaseDf, generateBaseFeatures
+from BaseFeaturesGenerator import BaseFeaturesGenerator
 
 # サーバのホストとポートを設定（サーバ3はポート12347、サーバ4は12348）
 HOST = "0.0.0.0"
@@ -13,15 +13,21 @@ PORT = 8765
 conn = psycopg2.connect("dbname=mydatabase user=user password=password host=db")
 cursor = conn.cursor()
 
+# BaseFeaturesGeneratorインスタンス定義
+bfg = BaseFeaturesGenerator()
 
 def insert_trade(trade):
-    insert_query = 'INSERT INTO baseFeatures (UNIXTIME, open, high, low, close, mean, VWMean, median, "25%", "50%", "75%",\
-                    center, buySideMean, sellSideMean, buySideVWMean, sellSideVWMean, buySideMedian, sellSideMedian, buySideCenter, sellSideCenter, "buySide25%", \
-                        "buySide50%", "buySide75%", "sellSide25%", "sellSide50%", "sellSide75%", sideMean, sideMedian, priceChangeMean, opentime, closetime, \
-                            "time25%", "time50%", "time75%") VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, \
-                                                                {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, \
-                                                                    {}, {}, {}, {}, {}, {}, {}, {}, {}, {},\
-                                                                        {}, {}, {}, {})'.format(
+    insert_query = 'INSERT INTO baseFeatures ("UNIXTIME", "open", "high", "low", "close", "mean", "VWMean", "median", "25%", "50%", "75%",\
+                    "center", "buySideMean", "sellSideMean", "buySideVWMean", "sellSideVWMean", "buySideMedian", "sellSideMedian", "buySideCenter", "sellSideCenter", "buySide25%", \
+                        "buySide50%", "buySide75%", "sellSide25%", "sellSide50%", "sellSide75%", "sideMean", "sideMedian", "priceChangeMean", "opentime", "closetime", \
+                            "time25%", "time50%", "time75%", "reHighPrice", "reLowPrice", "reClosePrice", "reMeanPrice", "reMedianPrice", "re25%Price", "re50%Price", "re75%Price", "reCenterPrice", \
+                                "reHighCuSize", "reLowCuSize", "reCloseCuSize", "reMeanCuSize", "reMedianCuSize", "re25%CuSize", "re50%CuSize", "re75%CuSize", "reCenterCuSize") \
+                                VALUES ({}, {}, {}, {}, {}, {}, {}, {}, {}, {}, \
+                                    {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, \
+                                        {}, {}, {}, {}, {}, {}, {}, {}, {}, {},\
+                                            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, \
+                                                {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, \
+                                                    {}, {})'.format(
         trade['UNIXTIME'],
         trade['open'],
         trade['high'],
@@ -55,7 +61,25 @@ def insert_trade(trade):
         trade['closetime'],
         trade['time25%'],
         trade['time50%'],
-        trade['time75%']
+        trade['time75%'],
+        trade['reHighPrice'], 
+        trade['reLowPrice'], 
+        trade['reClosePrice'], 
+        trade['reMeanPrice'], 
+        trade['reMedianPrice'], 
+        trade['re25%Price'], 
+        trade['re50%Price'], 
+        trade['re75%Price'],
+        trade['reCenterPrice'],
+        trade['reHighCuSize'], 
+        trade['reLowCuSize'], 
+        trade['reCloseCuSize'], 
+        trade['reMeanCuSize'], 
+        trade['reMedianCuSize'], 
+        trade['re25%CuSize'], 
+        trade['re50%CuSize'], 
+        trade['re75%CuSize'],
+        trade['reCenterCuSize']
     )
     cursor.execute(insert_query)
     conn.commit()
@@ -88,8 +112,8 @@ async def handle_client(websocket, path):
             full_data = [item for sublist in received_data[data_id]["chunks"] for item in sublist]
             print("Received full data:")
             df = pd.DataFrame(full_data)
-            base_df = generateBaseDf(df_org=df)
-            base_feature_df = generateBaseFeatures(df=base_df)
+            base_df = bfg.generateBaseDf(df_org=df)
+            base_feature_df = bfg.generateBaseFeatures(df=base_df)
             insert_trade(base_feature_df)
 
             # 使用済みデータを削除

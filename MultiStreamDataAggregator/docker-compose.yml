@@ -1,0 +1,123 @@
+version: '3.8'
+
+services:
+  msda_db:
+    container_name: msda_db
+    hostname: msda_db
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: streamdb
+    ports:
+      - "54321:5432"
+    volumes: 
+      - type: bind
+        source: ./db/DBData
+        target: /var/lib/postgresql/data
+    networks:
+      MSDA_nw:
+        ipv4_address: 192.168.3.2
+
+  msda_adminer:
+    container_name: msda_adminer
+    hostname: msda_adminer
+    image: adminer
+    restart: always
+    depends_on:
+      - msda_db
+    ports:
+      - 8080:8080
+    networks:
+      MSDA_nw:
+        ipv4_address: 192.168.3.3
+
+  msda_gate01:
+    container_name: msda_gate01
+    hostname: msda_gate01
+    build:
+      context: .
+      dockerfile: gate01/Dockerfile
+    restart: always
+    volumes: 
+      - type: bind
+        source: ./gate01/Personal
+        target: /gate01/app/Personal
+      - type: bind
+        source: ./Share
+        target: /gate01/app/Share
+    depends_on:
+      - msda_db
+    networks:
+      MSDA_nw:
+        ipv4_address: 192.168.3.4
+
+  msda_gate02:
+    container_name: msda_gate02
+    hostname: msda_gate02
+    build:
+      context: .
+      dockerfile: gate02/Dockerfile
+    restart: always
+    volumes: 
+      - type: bind
+        source: ./gate02/Personal
+        target: /gate02/app/Personal
+      - type: bind
+        source: ./Share
+        target: /gate02/app/Share
+    depends_on:
+      - msda_db
+    networks:
+      MSDA_nw:
+        ipv4_address: 192.168.3.5
+        
+  msda_gate03:
+    container_name: msda_gate03
+    hostname: msda_gate03
+    build:
+      context: .
+      dockerfile: gate03/Dockerfile
+    restart: always
+    volumes: 
+      - type: bind
+        source: ./gate03/Personal
+        target: /gate03/app/Personal
+      - type: bind
+        source: ./Share
+        target: /gate03/app/Share
+    depends_on:
+      - msda_db
+    networks:
+      MSDA_nw:
+        ipv4_address: 192.168.3.6
+        
+  msda_gate04:
+    container_name: msda_gate04
+    hostname: msda_gate04
+    build:
+      context: .
+      dockerfile: gate04/Dockerfile
+    restart: always
+    volumes: 
+      - type: bind
+        source: ./gate04/Personal
+        target: /gate04/app/Personal
+      - type: bind
+        source: ./Share
+        target: /gate04/app/Share
+    depends_on:
+      - msda_db
+    networks:
+      MSDA_nw:
+        ipv4_address: 192.168.3.7
+
+networks: 
+  MSDA_nw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.3.0/24
+    

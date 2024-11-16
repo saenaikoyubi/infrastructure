@@ -12,7 +12,7 @@ conn = psycopg2.connect("dbname=mydatabase user=user password=password host=db")
 cursor = conn.cursor()
 
 def insert_trade(trade):
-    insert_query = 'INSERT INTO stream (UNIXTIME, side, size, price, priceChange, tradeID, blockTrade) VALUES ({}, \'{}\', {}, {}, \'{}\', \'{}\', \'{}\')'.format(
+    insert_query = 'INSERT INTO stream ("UNIXTIME", "side", "size", "price", "priceChange", "tradeID", "blockTrade") VALUES ({}, \'{}\', {}, {}, \'{}\', \'{}\', \'{}\')'.format(
         trade['UNIXTIME'],
         trade['side'],
         trade['size'],

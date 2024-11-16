@@ -1,57 +1,57 @@
 version: '3.8'
 
 services:
-  gate:
-    container_name: gate
-    hostname: gate
-    build:
-      context: ./gate
-      dockerfile: Dockerfile
-    restart: always
-    volumes: 
-      - type: bind
-        source: gate/volume
-        target: /gate
-    depends_on:
-      - aggregate1
-      - aggregate2
-    networks:
-      SDTS_nw:
-        ipv4_address: 192.168.2.2
+  # gate:
+  #   container_name: gate
+  #   hostname: gate
+  #   build:
+  #     context: ./gate
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   volumes: 
+  #     - type: bind
+  #       source: gate/volume
+  #       target: /gate
+  #   depends_on:
+  #     - aggregate1
+  #     - aggregate2
+  #   networks:
+  #     SDTS_nw:
+  #       ipv4_address: 192.168.2.2
 
-  aggregate1:
-    container_name: aggregate1
-    hostname: aggregate1
-    build:
-      context: ./aggregate1
-      dockerfile: Dockerfile
-    restart: always
-    volumes: 
-      - type: bind
-        source: aggregate1/volume
-        target: /aggregate1
-    depends_on:
-      - db
-    networks:
-      SDTS_nw:
-        ipv4_address: 192.168.2.3
+  # aggregate1:
+  #   container_name: aggregate1
+  #   hostname: aggregate1
+  #   build:
+  #     context: ./aggregate1
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   volumes: 
+  #     - type: bind
+  #       source: aggregate1/volume
+  #       target: /aggregate1
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     SDTS_nw:
+  #       ipv4_address: 192.168.2.3
 
-  aggregate2:
-    container_name: aggregate2
-    hostname: aggregate2
-    build:
-      context: ./aggregate2
-      dockerfile: Dockerfile
-    restart: always
-    volumes: 
-      - type: bind
-        source: aggregate2/volume
-        target: /aggregate2
-    depends_on:
-      - db
-    networks:
-      SDTS_nw:
-        ipv4_address: 192.168.2.4
+  # aggregate2:
+  #   container_name: aggregate2
+  #   hostname: aggregate2
+  #   build:
+  #     context: ./aggregate2
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   volumes: 
+  #     - type: bind
+  #       source: aggregate2/volume
+  #       target: /aggregate2
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     SDTS_nw:
+  #       ipv4_address: 192.168.2.4
 
   db:
     container_name: db

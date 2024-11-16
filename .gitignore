@@ -1,8 +1,8 @@
-# DataAggregateInfra
+# DBData
 
 DataAggregateInfra/db-data/*
 StreamDataTradingSystem/db-data/*
-
+MultiStreamDataAggregator/db/DBData/*
 
 # other
 **/__pycache__
